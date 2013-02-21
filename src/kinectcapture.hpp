@@ -1,6 +1,6 @@
 #ifndef LUXKINECTDEV_HPP
 #define LUXKINECTDEV_HPP
-#include "icapture.h"
+#include "icapture.hpp"
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
 #include "QDebug"

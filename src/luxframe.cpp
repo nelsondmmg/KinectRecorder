@@ -1,4 +1,4 @@
-#include "luxframe.h"
+#include "luxframe.hpp"
 
 LuxFrame::LuxFrame()
 {

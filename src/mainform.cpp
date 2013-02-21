@@ -84,7 +84,7 @@ void MainForm::playPressed()
             break;
         }
 
-        cv::imshow("ee", frame1->img);
+        cv::imshow("ee", frame1->image);
         cvWaitKey(1);
 
     }
@@ -108,9 +108,9 @@ void MainForm::record(char type)
 
     while(1){
         capture->readFrame();
-        cv::imshow("ee", frame->img);
-        fwrite(frame->img.data, sizeof(unsigned char), 640*480*3, file);
-        fwrite(frame->depth.data, sizeof(float), 640*480*3, file);
+        cv::imshow("ee", frame->image);
+        fwrite(frame->image.data, sizeof(unsigned char), 640*480*3, file);
+        fwrite(frame->depth_map.data, sizeof(float), 640*480*3, file);
 
         //if(frame->img.empty())
        //     qDebug()<<"fuck";

@@ -1,4 +1,4 @@
-#include "kinectcapture.h"
+#include "kinectcapture.hpp"
 #include <QDebug>
 KinectCapture::KinectCapture(Resolutions res)
 {

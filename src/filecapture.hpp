@@ -1,6 +1,6 @@
 #ifndef FILECAPTURE_H
 #define FILECAPTURE_H
-#include "icapture.h"
+#include "icapture.hpp"
 class FileCapture : public ICapture
 {
 public:
