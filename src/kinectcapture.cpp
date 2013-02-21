@@ -1,8 +1,8 @@
-#include "kinectcapture.hpp"
+#include "kinectcapture.h"
 #include <QDebug>
 KinectCapture::KinectCapture(Resolutions res)
 {
-    capture = new cv::VideoCapture(CV_CAP_OPENNI);
+   capture = new cv::VideoCapture(CV_CAP_OPENNI);
     if(!capture->isOpened())
         qDebug()<<"Kinect is not opened";
     int resolution;
@@ -35,8 +35,8 @@ KinectCapture::KinectCapture(Resolutions res)
 void KinectCapture::readFrame()
 {
     capture->grab();
-    capture->retrieve( frame->depth, CV_CAP_OPENNI_POINT_CLOUD_MAP );
-    capture->retrieve( frame->img, CV_CAP_OPENNI_BGR_IMAGE );
+    capture->retrieve( frame->depth_map, CV_CAP_OPENNI_POINT_CLOUD_MAP );
+    capture->retrieve( frame->image, CV_CAP_OPENNI_BGR_IMAGE );
 }
 
 

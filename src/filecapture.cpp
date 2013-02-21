@@ -48,14 +48,14 @@ void FileCapture::readFrame()
         throw HaveNotFrameException();
         return;
     }
-    if(frame->img.empty())
+    if(frame->image.empty())
     {
-        frame->img.create(cv::Size(frame_width, frame_height),CV_8UC3);
-        frame->depth.create(cv::Size(frame_width,frame_height),CV_32FC3);
+        frame->image.create(cv::Size(frame_width, frame_height),CV_8UC3);
+        frame->depth_map.create(cv::Size(frame_width,frame_height),CV_32FC3);
     }
 
-    fread(frame->img.data, sizeof(unsigned char), frame_width*frame_height*3, file);
-    fread(frame->depth.data, sizeof(float), frame_width*frame_height*3, file);
+    fread(frame->image.data, sizeof(unsigned char), frame_width*frame_height*3, file);
+    fread(frame->depth_map.data, sizeof(float), frame_width*frame_height*3, file);
     QTest::qSleep(1000/15);
 
     iter++;

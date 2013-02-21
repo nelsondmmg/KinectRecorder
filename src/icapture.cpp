@@ -1,4 +1,4 @@
-#include "icapture.hpp"
+#include "icapture.h"
 
 ICapture::ICapture()
 {

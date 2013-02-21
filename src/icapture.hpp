@@ -1,6 +1,6 @@
 #ifndef ICAPTURE_HPP
 #define ICAPTURE_HPP
-#include "luxframe.hpp"
+#include "luxframe.h"
 #include <cstdio>
 enum Resolutions{LUX_RES_320x240, LUX_RES_640x480, LUX_RES_1280x1024};
 class ICapture

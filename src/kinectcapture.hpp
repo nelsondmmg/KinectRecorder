@@ -1,8 +1,9 @@
 #ifndef LUXKINECTDEV_HPP
 #define LUXKINECTDEV_HPP
-#include "icapture.hpp"
+#include "icapture.h"
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
+#include "QDebug"
 class KinectCapture : public ICapture
 {
 public:
