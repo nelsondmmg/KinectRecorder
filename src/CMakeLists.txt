@@ -27,6 +27,9 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# append this library's includes for use in higher-level directories
+set(GLOBAL_INCLUDES ${GLOBAL_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+
 set(headers mainform.hpp mainwindow.hpp)
 qt4_wrap_cpp(headers_moc ${headers})
 qt4_wrap_ui(headers_ui ${ui_files})
