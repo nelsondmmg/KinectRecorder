@@ -7,6 +7,8 @@ public:
     FileCapture(std::string path);
     ~FileCapture();
     virtual void readFrame();
+    int getFrameCount () { return frame_count; };
+
     class HaveNotFrameException{};
 private:
     int iter;
