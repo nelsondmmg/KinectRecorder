@@ -28,7 +28,9 @@ find_package(OpenCV REQUIRED)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # append this library's includes for use in higher-level directories
-set(GLOBAL_INCLUDES ${GLOBAL_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+if (DEFINED GLOBAL_LIBS)
+	set(GLOBAL_LIBS ${GLOBAL_LIBS} kinectCapture; PARENT_SCOPE)
+endif()
 
 set(headers mainform.hpp mainwindow.hpp)
 qt4_wrap_cpp(headers_moc ${headers})
