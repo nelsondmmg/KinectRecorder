@@ -45,7 +45,7 @@ void FileCapture::readFrame()
     */
     if(iter > frame_count)
     {
-        throw HaveNotFrameException();
+        throw std::out_of_range (std::string("no more frames"));
         return;
     }
     if(frame->image.empty())

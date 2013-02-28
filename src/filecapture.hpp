@@ -1,6 +1,7 @@
 #ifndef FILECAPTURE_H
 #define FILECAPTURE_H
 #include "icapture.hpp"
+#include <stdexcept>
 class FileCapture : public ICapture
 {
 public:
@@ -9,7 +10,6 @@ public:
     virtual void readFrame();
     int getFrameCount () { return frame_count; };
 
-    class HaveNotFrameException{};
 private:
     int iter;
     std::string cur_path;
