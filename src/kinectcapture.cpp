@@ -1,6 +1,6 @@
 #include "kinectcapture.hpp"
 #include <QDebug>
-KinectCapture::KinectCapture(Resolutions res)
+KinectCapture::KinectCapture(Resolutions res, bool cs): coordinate_system(cs)
 {
    capture = new cv::VideoCapture(CV_CAP_OPENNI);
     if(!capture->isOpened())
@@ -37,6 +37,13 @@ void KinectCapture::readFrame()
     capture->grab();
     capture->retrieve( frame->depth_map, CV_CAP_OPENNI_POINT_CLOUD_MAP );
     capture->retrieve( frame->image, CV_CAP_OPENNI_BGR_IMAGE );
+    if (coordinate_system)
+    {
+        for (int i = 0 ; i< frame_width ; i++)
+            for (int j = 0 ; j < frame_height ; j++)
+                 frame->depth_map.at<cv::Vec3f>(j, i)[2] = - frame->depth_map.at<cv::Vec3f>(j, i)[2];
+    }
+
 }
 
 
