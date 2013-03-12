@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QFileDialog>
 #include <QSpinBox>
+#include <QLabel>
 #include "kinectcapture.hpp"
 #include "luxframe.hpp"
 class MainForm : public QWidget
@@ -27,14 +28,19 @@ private:
     QLineEdit *filenameOpenEdit = new QLineEdit(this);
     QGridLayout *layout = new QGridLayout(this);
     QSpinBox *frames_spinbox = new QSpinBox(this);
-
-    FILE* file;
+    QLabel *video_frame = new QLabel(this);
+    QPushButton *previewButton = new QPushButton(this);
+    FILE* file = NULL;
     bool is_record = false;
+    bool is_preview = false;
     int col_frames;
     ICapture *capture;
     LuxFrame *frame;
 
     void record(char type);
+    void myimshow(cv::Mat&);
+    void preview();
+    QImage Mat2QImage(cv::Mat const& src);
 signals:
     
 public slots:
@@ -44,6 +50,7 @@ public slots:
     void recordOnePressed();
     void recordNPressed();
     void playPressed();
+    void previewPressed();
 };
 
 #endif // MAINFORM_HPP

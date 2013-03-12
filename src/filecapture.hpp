@@ -7,13 +7,14 @@ class FileCapture : public ICapture
 public:
     FileCapture(std::string path);
     ~FileCapture();
-    virtual void readFrame();
+    void readFrame();
+    bool isConnected();
     int getFrameCount () { return frame_count; };
 
 private:
     int iter;
     std::string cur_path;
-    FILE* file;
+    FILE* file = NULL;
     int frame_count;
 };
 

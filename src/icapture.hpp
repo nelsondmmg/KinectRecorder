@@ -3,7 +3,7 @@
 #include "luxframe.hpp"
 #include <cstdio>
 enum Resolutions{LUX_RES_320x240, LUX_RES_640x480, LUX_RES_1280x1024};
-class ICapture
+class ICapture: public QObject
 {
 public:
     ICapture();
@@ -12,6 +12,7 @@ public:
     LuxFrame* getFrame();
     int getFrameWidth();
     int getFrameHeight();
+    virtual bool isConnected();
 protected:
     int frame_width, frame_height;
     LuxFrame *frame;

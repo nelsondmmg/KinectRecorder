@@ -33,3 +33,9 @@ int ICapture::getFrameHeight()
 {
     return frame_height;
 }
+
+
+bool ICapture::isConnected()
+{
+
+}

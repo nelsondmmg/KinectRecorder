@@ -1,6 +1,6 @@
 #include "filecapture.hpp"
-#include <QtTest/QTest>
 #include <QDebug>
+#include <unistd.h>
 FileCapture::FileCapture(std::string path)
 {
     iter = 1;
@@ -56,8 +56,8 @@ void FileCapture::readFrame()
 
     fread(frame->image.data, sizeof(unsigned char), frame_width*frame_height*3, file);
     fread(frame->depth_map.data, sizeof(float), frame_width*frame_height*3, file);
-    QTest::qSleep(1000/15);
-
+    //QTest::qSleep(1000/15);
+    usleep(1000000/15);
     iter++;
 }
 
@@ -68,4 +68,13 @@ void FileCapture::readFrame()
 FileCapture::~FileCapture()
 {
     fclose(file);
+}
+
+
+bool FileCapture::isConnected()
+{
+    if(file == NULL)
+        return false;
+    else
+        return true;
 }

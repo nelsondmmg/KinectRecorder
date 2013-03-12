@@ -46,3 +46,9 @@ KinectCapture::~KinectCapture()
 
 
 }
+
+
+bool KinectCapture::isConnected()
+{
+    return capture->isOpened();
+}
