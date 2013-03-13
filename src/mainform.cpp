@@ -4,6 +4,11 @@
 #include "kinectcapture.hpp"
 #include "filecapture.hpp"
 #include <QtTest/QTest>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <cstdlib>
+
 
 MainForm::MainForm(QWidget *parent) :
     QWidget(parent)
@@ -17,29 +22,29 @@ MainForm::MainForm(QWidget *parent) :
     recordAnyButton->setText("Record");
     recordOneButton->setText("Record one frame");
     recordNButton->setText("Record N frames");
-    previewButton->setText("Preview");
+    //previewButton->setText("Preview");
     playButton->setText("Play");
+    cleanButton->setText("New");
 
-    //filenameEdit->setText("test.kinvideo");
     layout->addWidget(filenameSaveEdit, 0, 0);
     layout->addWidget(browseSaveButton, 0, 1);
-    layout->addWidget(recordAnyButton, 1, 0);
-    layout->addWidget(recordOneButton, 2, 0);
-    layout->addWidget(recordNButton, 3, 0);
-    layout->addWidget(frames_spinbox, 3, 1);
-    layout->addWidget(filenameOpenEdit, 4, 0);
-    layout->addWidget(browseOpenButton, 4, 1);
+    layout->addWidget(cleanButton, 1, 0);
+    layout->addWidget(recordAnyButton, 2, 0);
+    layout->addWidget(recordOneButton, 3, 0);
+    layout->addWidget(recordNButton, 4, 0);
+    layout->addWidget(frames_spinbox, 4, 1);
+    layout->addWidget(filenameOpenEdit, 5, 0);
+    layout->addWidget(browseOpenButton, 5, 1);
 
-    layout->addWidget(playButton, 5, 0);
-    layout->addWidget(video_frame, 0, 2, 5, 1);
-    layout->addWidget(previewButton, 5, 2);
+    layout->addWidget(playButton, 6, 0);
+    layout->addWidget(video_frame, 0, 2, 6, 1);
+    //layout->addWidget(previewButton, 6, 2);
 
     recordAnyButton->setMinimumHeight(40);
     recordOneButton->setMinimumHeight(40);
     recordNButton->setMinimumHeight(40);
 
     video_frame->setPixmap(QPixmap(640,480));
-    //layout->setRowStretch(0, 1);
 
 
 
@@ -51,18 +56,21 @@ MainForm::MainForm(QWidget *parent) :
     connect(recordNButton, SIGNAL(clicked()), this, SLOT(recordNPressed()));
 
     connect(playButton, SIGNAL(clicked()), this, SLOT(playPressed()));
-    connect(previewButton, SIGNAL(clicked()), this, SLOT(previewPressed()));
+    //connect(previewButton, SIGNAL(clicked()), this, SLOT(previewPressed()));
+    connect(cleanButton, SIGNAL(clicked()), this, SLOT(cleanPressed()));
 
-    recordAnyButton->setEnabled(false);
-    recordNButton->setEnabled(false);
-    recordOneButton->setEnabled(false);
+    //recordAnyButton->setEnabled(false);
+    //recordNButton->setEnabled(false);
+    //recordOneButton->setEnabled(false);
     playButton->setEnabled(false);
-    capture = new KinectCapture();
-    if(!capture->isConnected())
-        previewButton->setEnabled(false);
-    frame = capture->getFrame();
 
-    this->show();
+    capture = new KinectCapture();
+    if(capture->isConnected())
+    {
+        frame = capture->getFrame();
+    }
+
+
 }
 
 
@@ -70,16 +78,14 @@ void MainForm::browseSavePressed()
 {
     filenameSaveEdit->setText(QFileDialog::getSaveFileName (this,
               tr ("Open Video"), "~", tr ("Kinect Video(*.kinvideo)")));
-    if(filenameSaveEdit->text() == "")
+    if(filenameSaveEdit->text().isEmpty())
         return;
-    if(file != NULL)
-        fclose(file);
-    file = fopen(filenameSaveEdit->text().toLatin1().data(), "wb");
-    recordAnyButton->setEnabled(true);
-    recordNButton->setEnabled(true);
-    recordOneButton->setEnabled(true);
-    int width = capture->getFrameWidth();
-    fwrite(&width, 1, sizeof(int), file);
+
+
+    QString format = ".kinvideo";
+    if(filenameSaveEdit->text().indexOf(format) == -1)
+        filenameSaveEdit->setText(filenameSaveEdit->text()+format);
+
 
 }
 
@@ -88,8 +94,11 @@ void MainForm::browseSavePressed()
 
 void MainForm::playPressed()
 {
-
-    ICapture *capture1 = new FileCapture(filenameOpenEdit->text().toStdString());
+    //is_preview = false;
+    std::string filename = filenameOpenEdit->text().toStdString();
+    if(filename.empty())
+        filename = filenameSaveEdit->text().toStdString();
+    ICapture *capture1 = new FileCapture(filename);
     LuxFrame *frame1 = capture1->getFrame();
     recordAnyButton->setEnabled(false);
     recordOneButton->setEnabled(false);
@@ -104,7 +113,7 @@ void MainForm::playPressed()
         }
         myimshow(frame1->image);
         //cv::imshow("ee", frame1->image);
-        cvWaitKey(1);
+        //cvWaitKey(1);
 
     }
 
@@ -112,6 +121,8 @@ void MainForm::playPressed()
     recordOneButton->setEnabled(true);
     recordNButton->setEnabled(true);
     delete capture1;
+    //is_preview = true;
+    //getFramesLoop();
 
 }
 
@@ -121,39 +132,32 @@ void MainForm::record(char type)
     browseSaveButton->setEnabled(false);
     browseOpenButton->setEnabled(false);
     playButton->setEnabled(false);
-    int iter;
+
+    if(file == NULL)
+    {
+        if(filenameSaveEdit->text().isEmpty())
+        {
+            char *filename = findFileName();
+            filenameSaveEdit->setText(filename);
+            delete filename;
+        }
+
+        file = fopen(filenameSaveEdit->text().toLatin1().data(), "wb");
+        int width = capture->getFrameWidth();
+        fwrite(&width, 1, sizeof(int), file);
+    }
     switch(type){
     case 'o':
-        iter = 1;
+        iter_frames = 1;
         break;
     case 'n':
-        iter = frames_spinbox->value();
+        iter_frames = frames_spinbox->value();
+        break;
+    case 'a':
+        iter_frames = -1;
         break;
     }
-
-    while(1){
-        capture->readFrame();
-        myimshow(frame->image);
-        //cv::imshow("ee", frame->image);
-        fwrite(frame->image.data, sizeof(unsigned char), 640*480*3, file);
-        fwrite(frame->depth_map.data, sizeof(float), 640*480*3, file);
-
-        //if(frame->img.empty())
-       //     qDebug()<<"fuck";
-
-        cvWaitKey(1);
-        if(type == 'a')
-        {
-            if(!is_record)
-                break;
-        }
-        else
-        {
-            iter--;
-            if(iter == 0)
-                break;
-        }
-    }
+    is_record = true;
 
     recordAnyButton->setEnabled(true);
     recordOneButton->setEnabled(true);
@@ -164,6 +168,30 @@ void MainForm::record(char type)
 
 }
 
+void MainForm::getFramesLoop()
+{
+    if(!capture->isConnected())
+        return;
+    while(is_preview){
+        capture->readFrame();
+        myimshow(frame->image);
+        //cv::imshow("ee", frame->image);
+        if(is_record)
+        {
+            fwrite(frame->image.data, sizeof(unsigned char), 640*480*3, file);
+            fwrite(frame->depth_map.data, sizeof(float), 640*480*3, file);
+
+            if(iter_frames != -1)
+            {
+                iter_frames--;
+                if(iter_frames == 0)
+                    is_record = false;
+            }
+
+        }
+    }
+
+}
 
 void MainForm::recordAnyPressed()
 {
@@ -181,6 +209,8 @@ void MainForm::recordAnyPressed()
     else
     {
         recordAnyButton->setText("Record");
+        fclose(file);
+        file = NULL;
         is_record = false;
     }
 
@@ -206,7 +236,7 @@ void MainForm::browseOpenPressed()
 {
     filenameOpenEdit->setText(QFileDialog::getOpenFileName (this,
               tr ("Open Video"), "~", tr ("Kinect Video(*.kinvideo)")));
-
+    playButton->setEnabled(true);
 }
 
 void MainForm::myimshow(cv::Mat & frame)
@@ -262,7 +292,7 @@ QImage MainForm::Mat2QImage(cv::Mat const& src)
 }
 
 
-void MainForm::previewPressed()
+/*void MainForm::previewPressed()
 {
     is_preview = !is_preview;
     if(is_preview)
@@ -273,6 +303,7 @@ void MainForm::previewPressed()
     else
         previewButton->setText("Preview");
 }
+*/
 
 
 void MainForm::preview()
@@ -284,4 +315,40 @@ void MainForm::preview()
         //cv::imshow("e", frame->image);
         //cvWaitKey(1);
     }
+}
+
+
+
+char* MainForm::findFileName()
+{
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    int iter = 1;
+    char *buff = new char[255];
+
+    while(1)
+    {
+         sprintf(buff, "%s/test%d.kinvideo", homedir, iter);
+        if(access(buff, 0) == -1)
+            break;
+        iter++;
+    }
+
+    return buff;
+}
+
+
+void MainForm::closeEvent(QCloseEvent *event)
+{
+    is_preview = false;
+    event->accept();
+}
+
+
+
+void MainForm::cleanPressed()
+{
+    if(file != NULL)
+        fclose(file);
+    filenameSaveEdit->clear();
 }

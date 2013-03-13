@@ -9,5 +9,8 @@ int main(int argc, char *argv[])
     //w.show();
     MainForm f;
     f.show();
-    return a.exec();
+    f.getFramesLoop();
+    //a.exec();
+
+    return 0;
 }
