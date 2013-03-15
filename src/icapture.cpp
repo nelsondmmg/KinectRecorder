@@ -6,11 +6,6 @@ ICapture::ICapture()
 }
 
 
-void ICapture::readFrame()
-{
-}
-
-
 ICapture::~ICapture()
 {
     delete frame;
@@ -23,19 +18,15 @@ LuxFrame *ICapture::getFrame()
 }
 
 
-int ICapture::getFrameWidth()
+long ICapture::getFrameWidth()
 {
     return frame_width;
 }
 
 
-int ICapture::getFrameHeight()
+long ICapture::getFrameHeight()
 {
     return frame_height;
 }
 
 
-bool ICapture::isConnected()
-{
-
-}

@@ -6,7 +6,7 @@ FileCapture::FileCapture(std::string path)
     iter = 1;
     cur_path = path;
     file = fopen(path.data(), "rb");
-    fread(&frame_width, sizeof(int), 1, file);
+    fread(&frame_width, sizeof(long), 1, file);
     switch(frame_width)
     {
     case 640:
@@ -20,9 +20,9 @@ FileCapture::FileCapture(std::string path)
         break;
     }
     fseek(file, 0, SEEK_END);
-    frame_count = (ftell(file) - sizeof(int))/(frame_width*frame_height*15);
+    frame_count = (ftell(file))/(frame_width*frame_height*15);
     qDebug()<<frame_count;
-    fseek(file, sizeof(int), SEEK_SET);
+    fseek(file, sizeof(long), SEEK_SET);
 
 
 
@@ -31,18 +31,6 @@ FileCapture::FileCapture(std::string path)
 
 void FileCapture::readFrame()
 {
-    /*
-    char cname[20];
-    sprintf(cname,"%s/pc%d", cur_path ,iter);
-    XnPoint3D * arr_point=new XnPoint3D[640*480];
-    std::ifstream inp_file(cname);
-
-    inp_file.read((char*)arr_point,640*480*sizeof(XnPoint3D));
-
-    sprintf(cname,"pointCloud/pc%d.jpg",iter);
-    IplImage *image=cvLoadImage(cname,1);
-    if (!image) throw HaveNotFrameException();
-    */
     if(iter > frame_count)
     {
         throw std::out_of_range (std::string("no more frames"));

@@ -8,13 +8,13 @@ class ICapture: public QObject
 public:
     ICapture();
     virtual ~ICapture();
-    virtual void readFrame();
+    virtual void readFrame() = 0;
+    virtual bool isConnected() = 0;
     LuxFrame* getFrame();
-    int getFrameWidth();
-    int getFrameHeight();
-    virtual bool isConnected();
+    long getFrameWidth();
+    long getFrameHeight();
 protected:
-    int frame_width, frame_height;
+    long frame_width, frame_height;
     LuxFrame *frame;
 
 
