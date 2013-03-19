@@ -12,21 +12,6 @@
 #include "luxframe.hpp"
 #include <QCloseEvent>
 #include <queue>
-class FramesSaver : public QObject {
- Q_OBJECT
- private:
-    FILE** file;
-    std::queue<LuxFrame> *queue;
- public:
-  FramesSaver(FILE** f, std::queue<LuxFrame> *q);
-  //virtual ~FramesSaver();
- public slots:
-     void process();
-
- signals:
-     void finished();
-     void error(QString err);
-};
 
 class MainForm : public QWidget
 {
@@ -61,13 +46,13 @@ private:
     LuxFrame *frame;
     std::queue<LuxFrame> *frames_queue = new std::queue<LuxFrame>();
     const char *homedir;
-    FramesSaver *fsaver;
     QThread *thread;
 
     void record(char type);
     void recordFromQueue();
     void myimshow(cv::Mat&);
     void preview();
+    void queueRecord();
     char* findFileName();
     QImage Mat2QImage(cv::Mat const& src);
 

@@ -9,8 +9,8 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <cstdlib>
-
-
+#include <QFuture>
+#include <QtConcurrentRun>
 
 MainForm::MainForm(QWidget *parent) :
     QWidget(parent)
@@ -68,10 +68,7 @@ MainForm::MainForm(QWidget *parent) :
     //recordNButton->setEnabled(false);
     //recordOneButton->setEnabled(false);
 
-    thread = new QThread();
-    fsaver = new FramesSaver(&file, frames_queue);
-    fsaver->moveToThread(thread);
-    thread->start();
+
 
     capture = new KinectCapture();
     if(capture->isConnected())
@@ -103,12 +100,12 @@ void MainForm::browseSavePressed()
 
 void MainForm::playPressed()
 {
-    //is_preview = false;
     std::string filename = filenameOpenEdit->text().toStdString();
     if(filename.empty())
         filename = filenameSaveEdit->text().toStdString();
     if(filename.empty())
         return;
+    playButton->setEnabled(false);
     ICapture *capture1 = new FileCapture(filename);
     LuxFrame *frame1 = capture1->getFrame();
     recordAnyButton->setEnabled(false);
@@ -132,8 +129,7 @@ void MainForm::playPressed()
     recordOneButton->setEnabled(true);
     recordNButton->setEnabled(true);
     delete capture1;
-    //is_preview = true;
-    //getFramesLoop();
+    playButton->setEnabled(true);
 
 }
 
@@ -172,7 +168,7 @@ void MainForm::record(char type)
         break;
     }
     is_record = true;
-
+    QFuture <void> thread = QtConcurrent::run(this, &MainForm::queueRecord);
     //recordAnyButton->setEnabled(true);
     //recordOneButton->setEnabled(true);
     //recordNButton->setEnabled(true);
@@ -196,9 +192,11 @@ void MainForm::getFramesLoop()
             //fwrite(frame->image.data, sizeof(unsigned char), 640*480*3, file);
             //fwrite(frame->depth_map.data, sizeof(float), 640*480*3, file);
             frames_queue->push(*frame);
+
             if(iter_frames != -1)
             {
                 iter_frames--;
+
                 if(iter_frames == 0)
                 {
                     is_record = false;
@@ -209,7 +207,7 @@ void MainForm::getFramesLoop()
                     browseSaveButton->setEnabled(true);
                     browseOpenButton->setEnabled(true);
                     playButton->setEnabled(true);
-                    fsaver->process();
+
 
                 }
             }
@@ -226,14 +224,17 @@ void MainForm::recordAnyPressed()
         recordAnyButton->setText("STOP");
         recordOneButton->setEnabled(false);
         recordNButton->setEnabled(false);
-
+        if(file != NULL){
+            fclose(file);
+            file = NULL;
+        }
         record('a');
     }
     else
     {
         is_record = false;
         recordAnyButton->setText("Record");
-        fclose(file);
+
         file = NULL;
         cleanButton->setEnabled(true);
         recordOneButton->setEnabled(true);
@@ -241,7 +242,8 @@ void MainForm::recordAnyPressed()
         browseSaveButton->setEnabled(true);
         browseOpenButton->setEnabled(true);
         playButton->setEnabled(true);
-        fsaver->process();
+        //fsaver->process();
+
     }
 
 }
@@ -410,24 +412,22 @@ MainForm::~MainForm()
     delete frames_queue;
 }
 
-
-FramesSaver::FramesSaver(FILE **f, std::queue<LuxFrame> *q)
+void MainForm::queueRecord()
 {
-    file = f;
-    queue = q;
-}
-
-
-void FramesSaver::process()
-{
-        LuxFrame *temp_frame;
-
-        while(!queue->empty())
-        {
-            temp_frame = &queue->front();
-            fwrite(temp_frame->image.data, sizeof(unsigned char), 640*480*3, *file);
-            fwrite(temp_frame->depth_map.data, sizeof(float), 640*480*3, *file);
-            queue->pop();
-        }
-        qDebug()<<"end of record";
+    LuxFrame *temp_frame;
+    //qDebug()<<"start of record";
+    while(is_record || !frames_queue->empty())
+    {
+    while(!frames_queue->empty())
+    {
+        temp_frame = &frames_queue->front();
+        //qDebug()<<"step";
+        fwrite(temp_frame->image.data, sizeof(unsigned char), 640*480*3, file);
+        fwrite(temp_frame->depth_map.data, sizeof(float), 640*480*3, file);
+        frames_queue->pop();
+    }
+    //qDebug()<<"frames end";
+    usleep(100000);
+    }
+    qDebug()<<"end of record";
 }
