@@ -83,7 +83,7 @@ MainForm::MainForm(QWidget *parent) :
 void MainForm::browseSavePressed()
 {
     filenameSaveEdit->setText(QFileDialog::getSaveFileName (this,
-              tr ("Open Video"), "~", tr ("Kinect Video(*.kinvideo)")));
+              tr ("Open Video"), homedir, tr ("Kinect Video(*.kinvideo)")));
     if(filenameSaveEdit->text().isEmpty())
         return;
 
@@ -269,7 +269,7 @@ void MainForm::recordOnePressed()
 void MainForm::browseOpenPressed()
 {
     filenameOpenEdit->setText(QFileDialog::getOpenFileName (this,
-              tr ("Open Video"), "~", tr ("Kinect Video(*.kinvideo)")));
+              tr ("Open Video"), homedir, tr ("Kinect Video(*.kinvideo)")));
     playButton->setEnabled(true);
 }
 
