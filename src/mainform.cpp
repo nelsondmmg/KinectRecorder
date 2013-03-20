@@ -169,6 +169,7 @@ void MainForm::record(char type)
     }
     is_record = true;
     QFuture <void> thread = QtConcurrent::run(this, &MainForm::queueRecord);
+
     //recordAnyButton->setEnabled(true);
     //recordOneButton->setEnabled(true);
     //recordNButton->setEnabled(true);
@@ -192,7 +193,7 @@ void MainForm::getFramesLoop()
             //fwrite(frame->image.data, sizeof(unsigned char), 640*480*3, file);
             //fwrite(frame->depth_map.data, sizeof(float), 640*480*3, file);
             frames_queue->push(*frame);
-
+            //qDebug()<<"push";
             if(iter_frames != -1)
             {
                 iter_frames--;
@@ -235,7 +236,6 @@ void MainForm::recordAnyPressed()
         is_record = false;
         recordAnyButton->setText("Record");
 
-        file = NULL;
         cleanButton->setEnabled(true);
         recordOneButton->setEnabled(true);
         recordNButton->setEnabled(true);
@@ -421,7 +421,7 @@ void MainForm::queueRecord()
     while(!frames_queue->empty())
     {
         temp_frame = &frames_queue->front();
-        //qDebug()<<"step";
+        //qDebug()<<"pop";
         fwrite(temp_frame->image.data, sizeof(unsigned char), 640*480*3, file);
         fwrite(temp_frame->depth_map.data, sizeof(float), 640*480*3, file);
         frames_queue->pop();
