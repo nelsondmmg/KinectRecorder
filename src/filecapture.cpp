@@ -6,7 +6,7 @@ FileCapture::FileCapture(std::string path)
     iter = 1;
     cur_path = path;
     file = fopen(path.data(), "rb");
-    fread(&frame_width, sizeof(long), 1, file);
+    fread(&frame_width, sizeof(uint32_t), 1, file);
     switch(frame_width)
     {
     case 640:
@@ -22,7 +22,7 @@ FileCapture::FileCapture(std::string path)
     fseek(file, 0, SEEK_END);
     frame_count = (ftell(file))/(frame_width*frame_height*15);
     qDebug()<<frame_count;
-    fseek(file, sizeof(long), SEEK_SET);
+    fseek(file, sizeof(uint32_t), SEEK_SET);
 
 
 

@@ -14,7 +14,7 @@ public:
     long getFrameWidth();
     long getFrameHeight();
 protected:
-    long frame_width, frame_height;
+    uint32_t frame_width, frame_height;
     LuxFrame *frame;
 
 
