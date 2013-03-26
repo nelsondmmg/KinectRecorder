@@ -12,7 +12,10 @@
 #include "luxframe.hpp"
 #include <QCloseEvent>
 #include <queue>
-
+#include <QMetaType>
+#include <QFuture>
+#include <QtConcurrentRun>
+#include <mutex>
 class MainForm : public QWidget
 {
     Q_OBJECT
@@ -35,7 +38,6 @@ private:
     QGridLayout *layout = new QGridLayout(this);
     QSpinBox *frames_spinbox = new QSpinBox(this);
     QLabel *video_frame = new QLabel(this);
-    //QPushButton *previewButton = new QPushButton(this);
     QPushButton *cleanButton = new QPushButton(this);
     FILE* file = NULL;
     bool is_record = false;
@@ -46,17 +48,16 @@ private:
     LuxFrame *frame;
     std::queue<LuxFrame> *frames_queue = new std::queue<LuxFrame>();
     const char *homedir;
-    QThread *thread;
-
+    QFuture <void> thread_read_frames;
+    std::mutex mut;
     void record(char type);
     void recordFromQueue();
-    void myimshow(cv::Mat&);
-    void preview();
+
     void queueRecord();
     char* findFileName();
     QImage Mat2QImage(cv::Mat const& src);
-
 signals:
+    void showImage(cv::Mat &frame);
     
 public slots:
     void browseSavePressed();
@@ -65,6 +66,7 @@ public slots:
     void recordOnePressed();
     void recordNPressed();
     void playPressed();
+    void myimshow(cv::Mat&);
     //void previewPressed();
     void cleanPressed();
 };

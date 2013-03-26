@@ -9,8 +9,6 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <cstdlib>
-#include <QFuture>
-#include <QtConcurrentRun>
 
 MainForm::MainForm(QWidget *parent) :
     QWidget(parent)
@@ -26,7 +24,6 @@ MainForm::MainForm(QWidget *parent) :
     recordAnyButton->setText("Record");
     recordOneButton->setText("Record one frame");
     recordNButton->setText("Record N frames");
-    //previewButton->setText("Preview");
     playButton->setText("Play");
     cleanButton->setText("New");
     frames_spinbox->setMaximum(200);
@@ -43,7 +40,6 @@ MainForm::MainForm(QWidget *parent) :
 
     layout->addWidget(playButton, 6, 0);
     layout->addWidget(video_frame, 0, 2, 6, 1);
-    //layout->addWidget(previewButton, 6, 2);
 
     recordAnyButton->setMinimumHeight(40);
     recordOneButton->setMinimumHeight(40);
@@ -61,13 +57,10 @@ MainForm::MainForm(QWidget *parent) :
     connect(recordNButton, SIGNAL(clicked()), this, SLOT(recordNPressed()));
 
     connect(playButton, SIGNAL(clicked()), this, SLOT(playPressed()));
-    //connect(previewButton, SIGNAL(clicked()), this, SLOT(previewPressed()));
     connect(cleanButton, SIGNAL(clicked()), this, SLOT(cleanPressed()));
 
-    //recordAnyButton->setEnabled(false);
-    //recordNButton->setEnabled(false);
-    //recordOneButton->setEnabled(false);
-
+    qRegisterMetaType<cv::Mat>("cv::Mat&");
+    connect(this, SIGNAL(showImage(cv::Mat&)), this, SLOT(myimshow(cv::Mat&)));
 
 
     capture = new KinectCapture();
@@ -75,7 +68,17 @@ MainForm::MainForm(QWidget *parent) :
     {
         frame = capture->getFrame();
     }
-
+    else
+    {
+        recordAnyButton->setEnabled(false);
+        recordOneButton->setEnabled(false);
+        recordNButton->setEnabled(false);
+        browseSaveButton->setEnabled(false);
+        filenameSaveEdit->setEnabled(false);
+        cleanButton->setEnabled(false);
+        frames_spinbox->setEnabled(false);
+    }
+    thread_read_frames = QtConcurrent::run(this, &MainForm::getFramesLoop);
 
 }
 
@@ -100,6 +103,9 @@ void MainForm::browseSavePressed()
 
 void MainForm::playPressed()
 {
+    is_preview = false;
+    while(!thread_read_frames.isFinished());
+    qDebug()<<"finished";
     std::string filename = filenameOpenEdit->text().toStdString();
     if(filename.empty())
         filename = filenameSaveEdit->text().toStdString();
@@ -113,6 +119,7 @@ void MainForm::playPressed()
     recordNButton->setEnabled(false);
     while(1)
     {
+
         try{
         capture1->readFrame();
         }catch(std::out_of_range){
@@ -120,6 +127,7 @@ void MainForm::playPressed()
             break;
         }
         myimshow(frame1->image);
+        qApp->processEvents();
         //cv::imshow("ee", frame1->image);
         //cvWaitKey(1);
 
@@ -131,6 +139,8 @@ void MainForm::playPressed()
     delete capture1;
     playButton->setEnabled(true);
 
+    is_preview = true;
+    thread_read_frames = QtConcurrent::run(this, &MainForm::getFramesLoop);
 }
 
 
@@ -154,7 +164,7 @@ void MainForm::record(char type)
 
         file = fopen(filenameSaveEdit->text().toLatin1().data(), "wb");
         int width = capture->getFrameWidth();
-        fwrite(&width, 1, sizeof(int), file);
+        fwrite(&width, 1, sizeof(uint32_t), file);
     }
     switch(type){
     case 'o':
@@ -168,7 +178,7 @@ void MainForm::record(char type)
         break;
     }
     is_record = true;
-    QFuture <void> thread = QtConcurrent::run(this, &MainForm::queueRecord);
+    QFuture<void> thread = QtConcurrent::run(this, &MainForm::queueRecord);
 
     //recordAnyButton->setEnabled(true);
     //recordOneButton->setEnabled(true);
@@ -181,12 +191,13 @@ void MainForm::record(char type)
 
 void MainForm::getFramesLoop()
 {
-    if(!capture->isConnected())
-        return;
+    if(capture->isConnected())
     while(is_preview){
+        mut.lock();
         capture->readFrame();
-        myimshow(frame->image);
-        //cv::imshow("ee", frame->image);
+        //myimshow(frame->image);
+
+        showImage(frame->image);
         if(is_record)
         {
 
@@ -215,7 +226,8 @@ void MainForm::getFramesLoop()
 
         }
     }
-
+    //mut.unlock();
+    //thread_read_frames.cancel();
 }
 
 void MainForm::recordAnyPressed()
@@ -242,7 +254,6 @@ void MainForm::recordAnyPressed()
         browseSaveButton->setEnabled(true);
         browseOpenButton->setEnabled(true);
         playButton->setEnabled(true);
-        //fsaver->process();
 
     }
 
@@ -277,9 +288,10 @@ void MainForm::myimshow(cv::Mat & frame)
 {
 
     video_frame->setPixmap(QPixmap::fromImage(Mat2QImage(frame)));
-    video_frame->update();
+    //video_frame->update();
     video_frame->show();
-    qApp->processEvents();
+    mut.unlock();
+    //qApp->processEvents();
 }
 
 QImage MainForm::Mat2QImage(cv::Mat const& src)
@@ -326,32 +338,6 @@ QImage MainForm::Mat2QImage(cv::Mat const& src)
 }
 
 
-/*void MainForm::previewPressed()
-{
-    is_preview = !is_preview;
-    if(is_preview)
-    {
-        previewButton->setText("STOP");
-        preview();
-    }
-    else
-        previewButton->setText("Preview");
-}
-*/
-
-
-void MainForm::preview()
-{
-    while(is_preview)
-    {
-        capture->readFrame();
-        myimshow(frame->image);
-        //cv::imshow("e", frame->image);
-        //cvWaitKey(1);
-    }
-}
-
-
 
 char* MainForm::findFileName()
 {
@@ -372,7 +358,9 @@ char* MainForm::findFileName()
 void MainForm::closeEvent(QCloseEvent *event)
 {
     is_preview = false;
+    while(!thread_read_frames.isFinished());
     event->accept();
+
 }
 
 
@@ -431,3 +419,4 @@ void MainForm::queueRecord()
     }
     qDebug()<<"end of record";
 }
+
