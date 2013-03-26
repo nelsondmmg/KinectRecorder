@@ -28,18 +28,19 @@ MainForm::MainForm(QWidget *parent) :
     cleanButton->setText("New");
     frames_spinbox->setMaximum(200);
 
-    layout->addWidget(filenameSaveEdit, 0, 0);
-    layout->addWidget(browseSaveButton, 0, 1);
-    layout->addWidget(cleanButton, 1, 0);
-    layout->addWidget(recordAnyButton, 2, 0);
-    layout->addWidget(recordOneButton, 3, 0);
-    layout->addWidget(recordNButton, 4, 0);
-    layout->addWidget(frames_spinbox, 4, 1);
-    layout->addWidget(filenameOpenEdit, 5, 0);
-    layout->addWidget(browseOpenButton, 5, 1);
+    layout->addWidget(frame_number_label, 0, 0);
+    layout->addWidget(filenameSaveEdit, 1, 0);
+    layout->addWidget(browseSaveButton, 1, 1);
+    layout->addWidget(cleanButton, 2, 0);
+    layout->addWidget(recordAnyButton, 3, 0);
+    layout->addWidget(recordOneButton, 4, 0);
+    layout->addWidget(recordNButton, 5, 0);
+    layout->addWidget(frames_spinbox, 6, 1);
+    layout->addWidget(filenameOpenEdit, 6, 0);
+    layout->addWidget(browseOpenButton, 6, 1);
 
-    layout->addWidget(playButton, 6, 0);
-    layout->addWidget(video_frame, 0, 2, 6, 1);
+    layout->addWidget(playButton, 7, 0);
+    layout->addWidget(video_frame, 1, 2, 7, 1);
 
     recordAnyButton->setMinimumHeight(40);
     recordOneButton->setMinimumHeight(40);
@@ -177,6 +178,7 @@ void MainForm::record(char type)
         iter_frames = -1;
         break;
     }
+    frames_count = 0;
     is_record = true;
     QFuture<void> thread = QtConcurrent::run(this, &MainForm::queueRecord);
 
@@ -204,6 +206,8 @@ void MainForm::getFramesLoop()
             //fwrite(frame->image.data, sizeof(unsigned char), 640*480*3, file);
             //fwrite(frame->depth_map.data, sizeof(float), 640*480*3, file);
             frames_queue->push(*frame);
+            frames_count++;
+            frame_number_label->setText(QString("%1").arg(frames_count));
             //qDebug()<<"push";
             if(iter_frames != -1)
             {

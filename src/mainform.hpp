@@ -39,6 +39,7 @@ private:
     QSpinBox *frames_spinbox = new QSpinBox(this);
     QLabel *video_frame = new QLabel(this);
     QPushButton *cleanButton = new QPushButton(this);
+    QLabel *frame_number_label = new QLabel(this);
     FILE* file = NULL;
     bool is_record = false;
     bool is_preview = true;
@@ -50,6 +51,7 @@ private:
     const char *homedir;
     QFuture <void> thread_read_frames;
     std::mutex mut;
+    unsigned int frames_count = 0;
     void record(char type);
     void recordFromQueue();
 
