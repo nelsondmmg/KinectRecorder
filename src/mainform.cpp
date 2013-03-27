@@ -35,7 +35,7 @@ MainForm::MainForm(QWidget *parent) :
     layout->addWidget(recordAnyButton, 3, 0);
     layout->addWidget(recordOneButton, 4, 0);
     layout->addWidget(recordNButton, 5, 0);
-    layout->addWidget(frames_spinbox, 6, 1);
+    layout->addWidget(frames_spinbox, 5, 1);
     layout->addWidget(filenameOpenEdit, 6, 0);
     layout->addWidget(browseOpenButton, 6, 1);
 

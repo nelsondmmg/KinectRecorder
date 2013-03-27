@@ -26,7 +26,6 @@ KinectCapture::KinectCapture(Resolutions res)
     }
 
     capture->set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, resolution);
-    capture->set(CV_CAP_PROP_OPENNI_REGISTRATION, 0);
 
 }
 
