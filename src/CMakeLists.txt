@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(KinectRecorder CXX)
 
@@ -46,8 +46,12 @@ add_executable(kinectRecorder ${sources} ${headers_moc} ${headers_ui})
 target_link_libraries(
 	kinectCapture
 
-	${QT_LIBRARIES}
 	${OpenCV_LIBS}
 )
 
-target_link_libraries(kinectRecorder kinectCapture)
+target_link_libraries(
+	kinectRecorder
+
+	kinectCapture
+	${QT_LIBRARIES}
+)

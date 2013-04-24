@@ -21,7 +21,6 @@ FileCapture::FileCapture(std::string path)
     }
     fseek(file, 0, SEEK_END);
     frame_count = (ftell(file))/(frame_width*frame_height*15);
-    qDebug()<<frame_count;
     fseek(file, sizeof(uint32_t), SEEK_SET);
 
 
@@ -44,7 +43,6 @@ void FileCapture::readFrame()
 
     fread(frame->image.data, sizeof(unsigned char), frame_width*frame_height*3, file);
     fread(frame->depth_map.data, sizeof(float), frame_width*frame_height*3, file);
-    //QTest::qSleep(1000/15);
     usleep(1000000/15);
     iter++;
 }

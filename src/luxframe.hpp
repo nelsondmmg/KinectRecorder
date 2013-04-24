@@ -1,7 +1,6 @@
 #ifndef LUXFRAME_H
 #define LUXFRAME_H
 #include "opencv/highgui.h"
-#include "QDebug"
 
 class LuxFrame
 {

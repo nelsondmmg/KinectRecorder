@@ -3,7 +3,7 @@
 #include "luxframe.hpp"
 #include <cstdio>
 enum Resolutions{LUX_RES_320x240, LUX_RES_640x480, LUX_RES_1280x1024};
-class ICapture: public QObject
+class ICapture
 {
 public:
     ICapture();

@@ -1,10 +1,10 @@
 #include "kinectcapture.hpp"
-#include <QDebug>
+
 KinectCapture::KinectCapture(Resolutions res)
 {
    capture = new cv::VideoCapture(CV_CAP_OPENNI);
     if(!capture->isOpened())
-        qDebug()<<"Kinect is not opened";
+        std::cerr << "Kinect is not opened" << std::endl;
     int resolution;
     switch(res)
     {
