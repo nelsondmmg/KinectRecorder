@@ -1,5 +1,4 @@
 #include "filecapture.hpp"
-#include <QDebug>
 #include <unistd.h>
 FileCapture::FileCapture(std::string path)
 {
