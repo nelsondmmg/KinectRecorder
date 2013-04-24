@@ -52,3 +52,9 @@ bool KinectCapture::isConnected()
 {
     return capture->isOpened();
 }
+
+
+bool KinectCapture::setFrameNumber(int n)
+{
+    return false;
+}

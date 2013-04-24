@@ -6,7 +6,6 @@ set(sources
 
 	main.cpp
 	mainform.cpp
-	mainwindow.cpp
 )
 
 set(library_sources
@@ -18,7 +17,6 @@ set(library_sources
 
 )
 
-set(ui_files mainwindow.ui)
 
 find_package(Qt4 REQUIRED QtCore QtGui QtOpenGL QtXml QtTest)
 include(${QT_USE_FILE})
@@ -32,7 +30,7 @@ if (DEFINED GLOBAL_LIBS)
 	set(GLOBAL_LIBS ${GLOBAL_LIBS} kinectCapture; PARENT_SCOPE)
 endif()
 
-set(headers mainform.hpp mainwindow.hpp)
+set(headers mainform.hpp)
 qt4_wrap_cpp(headers_moc ${headers})
 qt4_wrap_ui(headers_ui ${ui_files})
 

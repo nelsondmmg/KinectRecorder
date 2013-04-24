@@ -10,6 +10,7 @@ public:
     void readFrame();
     bool isConnected();
     int getFrameCount () { return frame_count; };
+    bool setFrameNumber(int n);
 
 private:
     int iter;

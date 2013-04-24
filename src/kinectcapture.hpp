@@ -11,6 +11,8 @@ public:
     void readFrame();
     virtual ~KinectCapture();
     bool isConnected();
+    bool setFrameNumber(int n);
+    int getFrameCount () {return 0;};
 private:
     cv::VideoCapture *capture;
 };

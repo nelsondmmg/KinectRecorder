@@ -10,6 +10,8 @@ public:
     virtual ~ICapture();
     virtual void readFrame() = 0;
     virtual bool isConnected() = 0;
+    virtual bool setFrameNumber(int n) = 0;
+    virtual int getFrameCount () = 0;
     LuxFrame* getFrame();
     long getFrameWidth();
     long getFrameHeight();

@@ -23,6 +23,8 @@ FileCapture::FileCapture(std::string path)
     frame_count = (ftell(file))/(frame_width*frame_height*15);
     qDebug()<<frame_count;
     fseek(file, sizeof(uint32_t), SEEK_SET);
+    frame->image.create(cv::Size(frame_width, frame_height),CV_8UC3);
+    frame->depth_map.create(cv::Size(frame_width,frame_height),CV_32FC3);
 
 
 
@@ -36,11 +38,6 @@ void FileCapture::readFrame()
         throw std::out_of_range (std::string("no more frames"));
         return;
     }
-    if(frame->image.empty())
-    {
-        frame->image.create(cv::Size(frame_width, frame_height),CV_8UC3);
-        frame->depth_map.create(cv::Size(frame_width,frame_height),CV_32FC3);
-    }
 
     fread(frame->image.data, sizeof(unsigned char), frame_width*frame_height*3, file);
     fread(frame->depth_map.data, sizeof(float), frame_width*frame_height*3, file);
@@ -49,6 +46,16 @@ void FileCapture::readFrame()
     iter++;
 }
 
+
+bool FileCapture::setFrameNumber(int n)
+{
+    if(n < 1 || n > frame_count)
+        return false;
+
+    fseek(file, frame_width*frame_height*3 *(sizeof(unsigned char)+ sizeof(float))*(n-1), SEEK_SET);
+    iter = n;
+    return true;
+}
 
 
 
@@ -66,3 +73,6 @@ bool FileCapture::isConnected()
     else
         return true;
 }
+
+
+
