@@ -39,7 +39,6 @@ void FileCapture::readFrame()
 
     fread(frame->image.data, sizeof(unsigned char), frame_width*frame_height*3, file);
     fread(frame->depth_map.data, sizeof(float), frame_width*frame_height*3, file);
-    usleep(1000000/15);
     iter++;
 }
 
@@ -48,8 +47,10 @@ bool FileCapture::setFrameNumber(int n)
 {
     if(n < 1 || n > frame_count)
         return false;
-
-    fseek(file, frame_width*frame_height*3 *(sizeof(unsigned char)+ sizeof(float))*(n-1), SEEK_SET);
+    uint32_t location = frame_width * frame_height * 3 * (sizeof (float) + 1);
+    location *= (n - 1);
+    location += sizeof (uint32_t);
+    fseek(file, location, SEEK_SET);
     iter = n;
     return true;
 }
