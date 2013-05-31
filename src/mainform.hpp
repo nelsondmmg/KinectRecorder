@@ -14,7 +14,7 @@
 #include <queue>
 #include <QMetaType>
 #include <QFuture>
-#include <QtConcurrentRun>
+#include <QtConcurrent>
 #include <mutex>
 class MainForm : public QWidget
 {
@@ -60,7 +60,7 @@ private:
     QImage Mat2QImage(cv::Mat const& src);
 signals:
     void showImage(cv::Mat &frame);
-    
+
 public slots:
     void browseSavePressed();
     void browseOpenPressed();

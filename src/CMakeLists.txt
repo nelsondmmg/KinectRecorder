@@ -1,55 +1,64 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 
 project(KinectRecorder CXX)
 
 set(sources
 
-	main.cpp
-	mainform.cpp
+    main.cpp
+    mainform.cpp
 )
 
 set(library_sources
 
-	filecapture.cpp
-	icapture.cpp
-	kinectcapture.cpp
-	luxframe.cpp
+    filecapture.cpp
+    icapture.cpp
+    kinectcapture.cpp
+    luxframe.cpp
 
 )
 
 
-find_package(Qt4 REQUIRED QtCore QtGui QtOpenGL QtXml QtTest)
-include(${QT_USE_FILE})
-
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 find_package(OpenCV REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_definitions(${Qt5Widgets_DEFINITIONS})
+add_definitions(${Qt5Concurrent_DEFINITIONS})
+
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+                    ${Qt5Widgets_INCLUDE_DIRS}
+                    ${Qt5Concurrent_INCLUDE_DIRS})
 
 # append this library's includes for use in higher-level directories
 if (DEFINED GLOBAL_LIBS)
-	set(GLOBAL_LIBS ${GLOBAL_LIBS} kinectCapture; PARENT_SCOPE)
+    set(GLOBAL_LIBS ${GLOBAL_LIBS} kinectCapture; PARENT_SCOPE)
 endif()
 
 set(headers mainform.hpp)
-qt4_wrap_cpp(headers_moc ${headers})
-qt4_wrap_ui(headers_ui ${ui_files})
+qt5_wrap_cpp(headers_moc ${headers})
+qt5_wrap_ui(headers_ui ${ui_files})
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Concurrent_EXECUTABLE_COMPILE_FLAGS}")
 
 add_library(kinectCapture SHARED ${library_sources})
 
 add_executable(kinectRecorder ${sources} ${headers_moc} ${headers_ui})
 
-target_link_libraries(
-	kinectCapture
+qt5_use_modules(kinectRecorder Widgets Concurrent)
 
-	${OpenCV_LIBS}
+target_link_libraries(
+    kinectCapture
+
+    ${OpenCV_LIBS}
 )
 
 target_link_libraries(
-	kinectRecorder
+    kinectRecorder
 
-	kinectCapture
-	${QT_LIBRARIES}
+    kinectCapture
+    ${QT_LIBRARIES}
 )

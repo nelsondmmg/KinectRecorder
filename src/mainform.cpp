@@ -3,7 +3,6 @@
 #include "icapture.hpp"
 #include "kinectcapture.hpp"
 #include "filecapture.hpp"
-#include <QtTest/QTest>
 #include <QThread>
 #include <unistd.h>
 #include <sys/types.h>
