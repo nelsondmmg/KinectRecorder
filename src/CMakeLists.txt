@@ -17,7 +17,6 @@ set(library_sources
 
 )
 
-
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -29,11 +28,6 @@ add_definitions(${Qt5Concurrent_DEFINITIONS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${Qt5Widgets_INCLUDE_DIRS}
                     ${Qt5Concurrent_INCLUDE_DIRS})
-
-# append this library's includes for use in higher-level directories
-if (DEFINED GLOBAL_LIBS)
-    set(GLOBAL_LIBS ${GLOBAL_LIBS} kinectCapture; PARENT_SCOPE)
-endif()
 
 set(headers mainform.hpp)
 qt5_wrap_cpp(headers_moc ${headers})
@@ -58,7 +52,5 @@ target_link_libraries(
 
 target_link_libraries(
     kinectRecorder
-
     kinectCapture
-    ${QT_LIBRARIES}
 )
