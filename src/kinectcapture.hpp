@@ -3,7 +3,7 @@
 #include <iostream>
 #include "icapture.hpp"
 #include <opencv2/opencv.hpp>
-#include <opencv/highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 class KinectCapture : public ICapture
 {
 public:
