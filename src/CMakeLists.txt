@@ -42,8 +42,6 @@ add_library(kinectCapture SHARED ${library_sources})
 
 add_executable(kinectRecorder ${sources} ${headers_moc} ${headers_ui})
 
-qt5_use_modules(kinectRecorder Widgets Concurrent)
-
 target_link_libraries(
     kinectCapture
 
