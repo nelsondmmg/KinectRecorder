@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.7 FATAL_ERROR)
 
 project(KinectRecorder CXX)
 
@@ -53,4 +53,6 @@ target_link_libraries(
 target_link_libraries(
     kinectRecorder
     kinectCapture
+    ${Qt5Concurrent_LIBRARIES}
+    ${Qt5Widgets_LIBRARIES}
 )
