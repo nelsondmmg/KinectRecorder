@@ -1,10 +1,4 @@
-#include "mainform.hpp"
-#include <QDebug>
-#include "icapture.hpp"
-#include "kinectcapture.hpp"
-#include "filecapture.hpp"
-#include <QThread>
-#include <unistd.h>
+#include <mainform.hpp>
 
 MainForm::MainForm(QWidget *parent) :
     QWidget(parent)
@@ -57,13 +51,14 @@ MainForm::MainForm(QWidget *parent) :
     qRegisterMetaType<cv::Mat>("cv::Mat&");
     connect(this, SIGNAL(showImage(cv::Mat&)), this, SLOT(myimshow(cv::Mat&)));
 
-
+#ifdef OPENCV_HAS_OPENNI
     capture = new KinectCapture();
     if(capture->isConnected())
     {
         frame = capture->getFrame();
     }
     else
+#endif
     {
         recordAnyButton->setEnabled(false);
         recordOneButton->setEnabled(false);
@@ -74,7 +69,6 @@ MainForm::MainForm(QWidget *parent) :
         frames_spinbox->setEnabled(false);
     }
     thread_read_frames = QtConcurrent::run(this, &MainForm::getFramesLoop);
-
 }
 
 
@@ -123,14 +117,8 @@ void MainForm::playPressed()
         }
         myimshow(frame1->image);
         qApp->processEvents();
-        //cv::imshow("ee", frame1->image);
-        //cvWaitKey(1);
-
     }
 
-    recordAnyButton->setEnabled(true);
-    recordOneButton->setEnabled(true);
-    recordNButton->setEnabled(true);
     delete capture1;
     playButton->setEnabled(true);
 
@@ -187,6 +175,7 @@ void MainForm::record(char type)
 
 void MainForm::getFramesLoop()
 {
+#ifdef OPENCV_HAS_OPENNI
     if(capture->isConnected())
     while(is_preview){
         mut.lock();
@@ -226,6 +215,7 @@ void MainForm::getFramesLoop()
     }
     //mut.unlock();
     //thread_read_frames.cancel();
+#endif // OPENCV_HAS_OPENNI
 }
 
 void MainForm::recordAnyPressed()

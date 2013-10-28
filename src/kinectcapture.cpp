@@ -1,3 +1,4 @@
+#ifdef OPENCV_HAS_OPENNI
 #include <kinectcapture.hpp>
 
 KinectCapture::KinectCapture(Resolutions res)
@@ -34,5 +35,6 @@ void KinectCapture::readFrame()
     capture->grab();
     capture->retrieve( frame->depth_map, CV_CAP_OPENNI_POINT_CLOUD_MAP );
     capture->retrieve( frame->image, CV_CAP_OPENNI_BGR_IMAGE );
-
 }
+
+#endif // OPENCV_HAS_OPENNI

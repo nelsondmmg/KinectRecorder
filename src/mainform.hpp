@@ -1,6 +1,10 @@
 #ifndef MAINFORM_HPP
 #define MAINFORM_HPP
 
+#include <queue>
+#include <mutex>
+#include <unistd.h>
+
 #include <QWidget>
 #include <QPushButton>
 #include <QLineEdit>
@@ -8,14 +12,19 @@
 #include <QFileDialog>
 #include <QSpinBox>
 #include <QLabel>
-#include "kinectcapture.hpp"
-#include "luxframe.hpp"
 #include <QCloseEvent>
-#include <queue>
 #include <QMetaType>
 #include <QFuture>
 #include <QtConcurrent>
-#include <mutex>
+#include <QDebug>
+#include <QThread>
+
+#ifdef OPENCV_HAS_OPENNI
+#include "kinectcapture.hpp"
+#endif
+#include <luxframe.hpp>
+#include <filecapture.hpp>
+#include <icapture.hpp>
 
 class MainForm : public QWidget
 {
