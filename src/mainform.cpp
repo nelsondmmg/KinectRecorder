@@ -51,6 +51,7 @@ MainForm::MainForm(QWidget *parent) :
     qRegisterMetaType<cv::Mat>("cv::Mat&");
     connect(this, SIGNAL(showImage(cv::Mat&)), this, SLOT(myimshow(cv::Mat&)));
 
+    capture = nullptr;
 #ifdef OPENCV_HAS_OPENNI
     capture = new KinectCapture();
     if(capture->isConnected())
@@ -385,7 +386,8 @@ MainForm::~MainForm()
     delete frames_spinbox;
     delete video_frame;
     delete cleanButton;
-    delete capture;
+    if (capture)
+        delete capture;
     delete frames_queue;
 }
 
