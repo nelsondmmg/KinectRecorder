@@ -16,6 +16,12 @@ set(library_sources
     icapture.hpp
 )
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING
+  "Choose the type of build: Debug/Release" FORCE)
+endif()
+
+
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -48,7 +54,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
       message(FATAL_ERROR "Compiler doesn't appear to support C++11 or at least C++0x")
     endif()
   endif()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3 -Wall -Wextra -pedantic")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -DQT_NO_DEBUG")
 endif()
 
 try_compile(OPENCV_HAS_OPENNI ${CMAKE_BINARY_DIR}
@@ -65,11 +72,7 @@ endif()
 add_library(kinectCapture SHARED ${library_sources})
 add_executable(kinectRecorder ${sources} ${headers_moc} ${headers_ui})
 
-target_link_libraries(
-    kinectCapture
-
-    ${OpenCV_LIBS}
-)
+target_link_libraries(kinectCapture ${OpenCV_LIBS})
 
 target_link_libraries(
     kinectRecorder
