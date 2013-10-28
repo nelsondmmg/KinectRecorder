@@ -1,5 +1,6 @@
 #ifndef LUXFRAME_H
 #define LUXFRAME_H
+
 #include <opencv2/highgui/highgui.hpp>
 
 class LuxFrame
@@ -8,9 +9,9 @@ public:
     cv::Mat image;
     cv::Mat depth_map;
 
-    LuxFrame();
+    LuxFrame() = default;
 
-    cv::Point3d getPoint3D(int x, int y) const
+    inline cv::Point3d getPoint3D(int x, int y) const
     {
         cv::Point3d point;
         point.x = depth_map.at<cv::Vec3f>(y, x)[0];
@@ -19,7 +20,8 @@ public:
 
         return point;
     }
-    void setPoint3D(int x, int y, cv::Point3d point)
+
+    inline void setPoint3D(int x, int y, cv::Point3d point)
     {
         depth_map.at<cv::Vec3f>(y, x)[0] = point.x;
         depth_map.at<cv::Vec3f>(y, x)[1] = point.y;
@@ -34,7 +36,6 @@ public:
         lf.depth_map.copyTo(this->depth_map);
     }
 
-    void Transform(cv::Mat R, cv::Point3d t);
 };
 
 #endif // LUXFRAME_H
