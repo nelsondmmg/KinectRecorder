@@ -59,7 +59,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
 endif()
 
 try_compile(OPENCV_HAS_OPENNI ${CMAKE_BINARY_DIR}
-            ${CMAKE_SOURCE_DIR}/compile-tests/test-openni.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/compile-tests/test-openni.cpp
 )
 
 if(${OPENCV_HAS_OPENNI})
