@@ -1,5 +1,5 @@
-#include "filecapture.hpp"
-#include <unistd.h>
+#include <filecapture.hpp>
+
 FileCapture::FileCapture(std::string path)
 {
     iter = 1;
@@ -23,9 +23,6 @@ FileCapture::FileCapture(std::string path)
     fseek(file, sizeof(uint32_t), SEEK_SET);
     frame->image.create(cv::Size(frame_width, frame_height),CV_8UC3);
     frame->depth_map.create(cv::Size(frame_width,frame_height),CV_32FC3);
-
-
-
 }
 
 
@@ -55,14 +52,10 @@ bool FileCapture::setFrameNumber(int n)
     return true;
 }
 
-
-
-
 FileCapture::~FileCapture()
 {
     fclose(file);
 }
-
 
 bool FileCapture::isConnected()
 {
@@ -71,6 +64,3 @@ bool FileCapture::isConnected()
     else
         return true;
 }
-
-
-

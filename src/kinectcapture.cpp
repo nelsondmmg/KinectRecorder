@@ -1,4 +1,4 @@
-#include "kinectcapture.hpp"
+#include <kinectcapture.hpp>
 
 KinectCapture::KinectCapture(Resolutions res)
 {
@@ -29,32 +29,10 @@ KinectCapture::KinectCapture(Resolutions res)
 
 }
 
-
-
 void KinectCapture::readFrame()
 {
     capture->grab();
     capture->retrieve( frame->depth_map, CV_CAP_OPENNI_POINT_CLOUD_MAP );
     capture->retrieve( frame->image, CV_CAP_OPENNI_BGR_IMAGE );
 
-}
-
-
-
-KinectCapture::~KinectCapture()
-{
-
-
-}
-
-
-bool KinectCapture::isConnected()
-{
-    return capture->isOpened();
-}
-
-
-bool KinectCapture::setFrameNumber(int n)
-{
-    return false;
 }

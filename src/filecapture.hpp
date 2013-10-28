@@ -1,7 +1,10 @@
 #ifndef FILECAPTURE_H
 #define FILECAPTURE_H
-#include "icapture.hpp"
+
+#include <icapture.hpp>
+#include <cstdio>
 #include <stdexcept>
+
 class FileCapture : public ICapture
 {
 public:
@@ -9,7 +12,7 @@ public:
     ~FileCapture();
     void readFrame();
     bool isConnected();
-    int getFrameCount () { return frame_count; };
+    int getFrameCount () { return frame_count; }
     bool setFrameNumber(int n);
 
 private:

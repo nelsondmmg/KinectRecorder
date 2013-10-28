@@ -11,9 +11,9 @@ set(sources
 set(library_sources
 
     filecapture.cpp
-    icapture.cpp
     kinectcapture.cpp
     luxframe.hpp
+    icapture.hpp
 )
 
 find_package(Qt5Widgets REQUIRED)
