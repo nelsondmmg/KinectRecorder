@@ -16,6 +16,7 @@
 #include <QFuture>
 #include <QtConcurrent>
 #include <mutex>
+
 class MainForm : public QWidget
 {
     Q_OBJECT

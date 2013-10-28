@@ -5,9 +5,6 @@
 #include "filecapture.hpp"
 #include <QThread>
 #include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
-#include <cstdlib>
 
 MainForm::MainForm(QWidget *parent) :
     QWidget(parent)
@@ -15,8 +12,6 @@ MainForm::MainForm(QWidget *parent) :
     this->setGeometry (10, 10, 400, 100);
 
     this->setLayout(layout);
-    struct passwd *pw = getpwuid(getuid());
-    homedir = pw->pw_dir;
 
     browseSaveButton->setText("Browse to Save");
     browseOpenButton->setText("Browse to Open");
@@ -86,7 +81,7 @@ MainForm::MainForm(QWidget *parent) :
 void MainForm::browseSavePressed()
 {
     filenameSaveEdit->setText(QFileDialog::getSaveFileName (this,
-              tr ("Open Video"), homedir, tr ("Kinect Video(*.kinvideo)")));
+              tr ("Open Video"), QDir::homePath(), tr ("Kinect Video(*.kinvideo)")));
     if(filenameSaveEdit->text().isEmpty())
         return;
 
@@ -283,7 +278,7 @@ void MainForm::recordOnePressed()
 void MainForm::browseOpenPressed()
 {
     filenameOpenEdit->setText(QFileDialog::getOpenFileName (this,
-              tr ("Open Video"), homedir, tr ("Kinect Video(*.kinvideo)")));
+              tr ("Open Video"), QDir::homePath(), tr ("Kinect Video(*.kinvideo)")));
     playButton->setEnabled(true);
 }
 
@@ -349,7 +344,8 @@ char* MainForm::findFileName()
 
     while(1)
     {
-         sprintf(buff, "%s/test%d.kinvideo", homedir, iter);
+         sprintf(buff, "%s/test%d.kinvideo", QDir::homePath().toLocal8Bit().data(),
+                 iter);
         if(access(buff, 0) == -1)
             break;
         iter++;
