@@ -58,17 +58,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -DQT_NO_DEBUG")
 endif()
 
-try_compile(OPENCV_HAS_OPENNI ${CMAKE_BINARY_DIR}
-            ${CMAKE_CURRENT_SOURCE_DIR}/compile-tests/test-openni.cpp
-)
-
-if(${OPENCV_HAS_OPENNI})
-  message(STATUS "OpenCV appears to support OpenNI, enabling kinect capture")
-  add_definitions(-DOPENCV_HAS_OPENNI)
-else()
-  message(STATUS "OpenCV noes not appear to support OpenNI, disabling kinect capture")
-endif()
-
 add_library(kinectCapture SHARED ${library_sources})
 add_executable(kinectRecorder ${sources} ${headers_moc} ${headers_ui})
 

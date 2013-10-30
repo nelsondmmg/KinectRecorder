@@ -1,10 +1,6 @@
 #ifndef LUXKINECTDEV_HPP
 #define LUXKINECTDEV_HPP
 
-#ifndef OPENCV_HAS_OPENNI
-#error OpenCV was compiled without OpenNI support
-#else
-
 #include <iostream>
 
 #include <opencv2/opencv.hpp>
@@ -25,7 +21,5 @@ public:
 private:
     cv::VideoCapture *capture;
 };
-
-#endif // OPENCV_HAS_OPENNI
 
 #endif // KINECTCAPTURE_HPP
