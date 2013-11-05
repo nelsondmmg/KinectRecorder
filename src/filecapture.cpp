@@ -1,6 +1,7 @@
 #include <filecapture.hpp>
 
 FileCapture::FileCapture(std::string path)
+    : file(NULL)
 {
     iter = 1;
     cur_path = path;

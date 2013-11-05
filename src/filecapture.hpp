@@ -18,7 +18,7 @@ public:
 private:
     int iter;
     std::string cur_path;
-    FILE* file = NULL;
+    FILE* file;
     int frame_count;
 };
 
