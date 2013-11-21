@@ -19,9 +19,7 @@
 #include <QDebug>
 #include <QThread>
 
-#ifdef OPENCV_HAS_OPENNI
 #include "kinectcapture.hpp"
-#endif
 #include <luxframe.hpp>
 #include <filecapture.hpp>
 #include <icapture.hpp>

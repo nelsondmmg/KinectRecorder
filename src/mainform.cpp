@@ -51,15 +51,12 @@ MainForm::MainForm(QWidget *parent) :
     qRegisterMetaType<cv::Mat>("cv::Mat&");
     connect(this, SIGNAL(showImage(cv::Mat&)), this, SLOT(myimshow(cv::Mat&)));
 
-    capture = nullptr;
-#ifdef OPENCV_HAS_OPENNI
     capture = new KinectCapture();
     if(capture->isConnected())
     {
         frame = capture->getFrame();
     }
     else
-#endif
     {
         recordAnyButton->setEnabled(false);
         recordOneButton->setEnabled(false);
@@ -176,7 +173,6 @@ void MainForm::record(char type)
 
 void MainForm::getFramesLoop()
 {
-#ifdef OPENCV_HAS_OPENNI
     if(capture->isConnected())
     while(is_preview){
         mut.lock();
@@ -216,7 +212,6 @@ void MainForm::getFramesLoop()
     }
     //mut.unlock();
     //thread_read_frames.cancel();
-#endif // OPENCV_HAS_OPENNI
 }
 
 void MainForm::recordAnyPressed()
